@@ -1,0 +1,9 @@
+﻿  Arpa0.cpp
+C:\Users\alvar\source\repos\Arpa0\Arpa0\Arpa0.cpp(4,44): warning C4273: 'MPI_Comm_size': vinculación de DLL incoherente
+C:\Program Files\DeinoMPI\include\mpi.h(740,27): message : vea la definición anterior de 'MPI_Comm_size'
+Arpa0.obj : error LNK2019: símbolo externo MPI_Comm_size sin resolver al que se hace referencia en la función main
+Arpa0.obj : error LNK2019: símbolo externo __imp_MPI_Comm_rank sin resolver al que se hace referencia en la función main
+Arpa0.obj : error LNK2019: símbolo externo __imp_MPI_Get_processor_nameA sin resolver al que se hace referencia en la función main
+Arpa0.obj : error LNK2019: símbolo externo __imp_MPI_InitA sin resolver al que se hace referencia en la función main
+Arpa0.obj : error LNK2019: símbolo externo __imp_MPI_Finalize sin resolver al que se hace referencia en la función main
+C:\Users\alvar\source\repos\Arpa0\x64\Debug\Arpa0.exe : fatal error LNK1120: 5 externos sin resolver
