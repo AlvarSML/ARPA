@@ -1,3 +1,0 @@
-﻿  proyecto1.cpp
-proyecto1.obj : warning LNK4075: se omite '/EDITANDCONTINUE' debido a la especificación '/INCREMENTAL:NO'
-  Arpa0.vcxproj -> C:\Users\alvar\source\repos\Arpa0\Debug\Arpa0.exe
