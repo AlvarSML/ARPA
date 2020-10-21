@@ -55,9 +55,6 @@ int main(int argc, char* argv[])
 
 	if (mirango == 0) {
 		printf("Resultado [%i]\n",res);
-		for (int i = 0; i < N; i++) {
-			printf("[%i]", arrDest[i]);
-		}
 		printf("\n");
 	}
 
