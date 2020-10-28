@@ -13,8 +13,10 @@ int main(int argc, char* argv[])
 	char nombre[32];
 	int arr[N][M];
 	int arrSum[N][M];
-	int arrDest[N][M];
 	int sum;
+
+	double tInicial;
+	double tFinal;
 
 	int dims[] = { N,M };
 	int period[] = { 1,0 }; //Son periodicas
@@ -29,6 +31,7 @@ int main(int argc, char* argv[])
 	fflush(stdout);
 
 	if (mirango == 0) {
+		tInicial = MPI_Wtime();
 		/* initialize random seed: */
 		srand(time(NULL));
 		for (int i = 0; i < N; i++) {
@@ -71,8 +74,11 @@ int main(int argc, char* argv[])
 	
 	MPI_Gather(&sum, 1, MPI_INT, arr, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
+	
+
 	// Resultado
 	if (mirango == 0) {
+		tFinal = MPI_Wtime();
 		printf("Array resultado:\n");
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {
@@ -80,6 +86,10 @@ int main(int argc, char* argv[])
 			}
 			printf("\n");
 		}
+		printf("T. Inicial: %f \nT. Final: %f\n",tInicial,tFinal);
+		printf("Tiempo tardado: %f\n",tFinal-tInicial);
+
+
 	}
 
 	
