@@ -40,11 +40,12 @@ int main(int argc, char* argv[])
 
 				// Envio de datos
 				MPI_Isend(&num, 1, MPI_INT, 1, 7, MPI_COMM_WORLD, &envio);
-
+				// Se tendrian que cerrar los send 
 
 				// Recuperacion del factorial
 				MPI_Irecv(&fact, 1, MPI_INT, 1, 8, MPI_COMM_WORLD, &vuelta);
 				// espera la recepcion
+				// Procesos intermedios
 				MPI_Wait(&vuelta, &status);
 
 				printf("Solucion: %i\n", fact);
@@ -59,6 +60,7 @@ int main(int argc, char* argv[])
 		printf("He recibido: %i\n", num);
 
 		fact = factorial(num);
+		wait();
 		// devolucion de datos
 		MPI_Isend(&fact, 1, MPI_INT, 0, 8, MPI_COMM_WORLD, &vuelta);
 
