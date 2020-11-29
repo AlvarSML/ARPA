@@ -2,7 +2,7 @@
 * ARQUITECTURAS PARALELAS
 * 3º Grado en Ingeniería Informática
 *
-* PRACTICA 7: "Tipos de datos derivados"
+* PRACTICA 8: "Gestión dinámica de procesos" (Hijo)
 *
 * AUTOR: Alberto Diez Busto
 * Rubén Herrero Vicario
@@ -44,13 +44,13 @@ int main(int argc, char* argv[])
 	
 
 	MPI_Bcast(&msg2,1,MPI_INT,0,intracom);
-	printf("Mensaje del proceso padre: %i",msg2);
+	printf("Mensaje del proceso padre: %i\n",msg2);
 	fflush(stdout);
 
 	int msg = 123;
 
 	MPI_Bcast(&msg, 1, MPI_INT,0,MPI_COMM_WORLD);
-	printf("Hola, soy el proceso hijo más pequeño %d\n",msg);
+	printf("Hola, soy el proceso hijo más pequeño[%i] :%d\n",mirango,msg);
 	fflush(stdout);
 
 

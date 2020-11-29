@@ -2,7 +2,7 @@
 * ARQUITECTURAS PARALELAS
 * 3º Grado en Ingeniería Informática
 *
-* PRACTICA 7: "Tipos de datos derivados"
+* PRACTICA 8: "Gestión dinámica de procesos"
 *
 * AUTOR: Alberto Diez Busto
 * Rubén Herrero Vicario
@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <windows.h>
 
-#define N 2
+#define N 4
 
 int main(int argc, char* argv[])
 {
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 	MPI_Comm_size(MPI_COMM_WORLD, &tamano);
 	MPI_Get_processor_name(nombre, &longitud);
 
-	printf("Padre: %s\n",nombre);
+	printf("Padre[%i]: %s\n",mirango,nombre);
 
 	// Intercomm -> Intracomm
 	MPI_Comm intercom; // Padre
