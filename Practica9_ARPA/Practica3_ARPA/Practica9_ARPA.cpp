@@ -1,12 +1,12 @@
 /*
 * ARQUITECTURAS PARALELAS
-* 3º Grado en Ingeniería Informática
+* 3ï¿½ Grado en Ingenierï¿½a Informï¿½tica
 *
 * PRACTICA 7: "Tipos de datos derivados"
 *
 * AUTOR: Alberto Diez Busto
-* Rubén Herrero Vicario
-* Alvar San Martín Liendo
+* Rubï¿½n Herrero Vicario
+* Alvar San Martï¿½n Liendo
 */
 ///////////////////////////////////////////////////////////////////////////
 
@@ -72,13 +72,13 @@ int main(int argc, char* argv[])
 			{
 				matriz1[i][j] = 2.;
 				matriz2[i][j] = (float)i+j;
-			}
+				matrizRes[i][j] = 0;
+ 			}
 		}
-
 	}
 
-
 	// Envio de matrices
+	// La 1 se tendra que mandar solo por filas
 	MPI_Bcast(matriz1[0], dim * dim, MPI_FLOAT, 0, MPI_COMM_WORLD);
 	MPI_Bcast(matriz2[0], dim * dim, MPI_FLOAT, 0, MPI_COMM_WORLD);
 
@@ -98,13 +98,12 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < numsProceso; i++) {
 		// Por cada valor de la fila
 		for (int j = 0; j < dim; j++) {
-			acc += matriz1[fila][j] * matriz2[j][fila];
-			// printf("Posicion [%i][%i] = %f * %f\n",fila,columna, matriz1[fila][j], matriz2[j][fila]);
-			// fflush(stdout);
+			acc += matriz1[fila][j] * matriz2[j][columna];
 		}
 
+
 		// No se porque es asi pero funciona
-		matrizRes[columna][fila] = acc;
+		matrizRes[fila][columna] = acc;
 
 		if ((columna + 1) == dim) {
 			columna = 0;
@@ -113,25 +112,47 @@ int main(int argc, char* argv[])
 		else {
 			columna++;
 		}
+
 		acc = 0;
 	}
 
-	// MPI_Gather(&matrizRes[id / dim][id % dim], dim, MPI_FLOAT, &matrizRes[id / dim][id % dim], dim, MPI_FLOAT, 0, MPI_COMM_WORLD);
-	// MPI_Allreduce(matrizRes[filaOrg], matrizRes[filaOrg], numsProceso, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
-
-	if (mirango != 0) {
-		MPI_Send(matrizRes,dim*dim,MPI_FLOAT,0,0,MPI_COMM_WORLD);
+	printf("Matriz Resultado\n");
+	for (int i = 0; i < dim; i++)
+	{
+		for (int j = 0; j < dim; j++)
+		{
+			printf("%f ", matrizRes[i][j]);
+		}
+		printf("\n");
 	}
-	
+	fflush(stdout);
+
+	MPI_Barrier(MPI_COMM_WORLD);
+	if (mirango != 0) {
+		//Cambiar por isend		
+		MPI_Send(matrizRes,dim*dim,MPI_FLOAT,0,1,MPI_COMM_WORLD);
+	}
 	
 	// Comprobacion de recepcion
 	if (mirango == 0) {
 
-		MPI_Status st;
-
 		// ESTA MAL
 		for (int i = 1; i < tamano; i++) {
-			MPI_Recv(matrizBuff,dim*dim, MPI_FLOAT,i,0, MPI_COMM_WORLD, &st);
+			MPI_Status st;
+			MPI_Recv(matrizBuff,dim*dim, MPI_FLOAT,MPI_ANY_SOURCE,1, MPI_COMM_WORLD, &st);
+
+			printf("Matriz Buffer (%i) \n",st.MPI_SOURCE);
+			printf("Errores %i \n", st.MPI_ERROR);
+			/*
+			for (int i = 0; i < dim; i++)
+			{
+				for (int j = 0; j < dim; j++)
+				{
+					printf("%f ", matrizBuff[i][j]);
+				}
+				printf("\n");
+			}
+			fflush(stdout);
 
 			// Calculo del valor de inicio
 			id = i * numsProceso;
@@ -152,11 +173,11 @@ int main(int argc, char* argv[])
 					columna++;
 				}
 			}
-
+			*/
 		}
 
 		printf("Nums Proceso: %i\n",numsProceso);
-
+		fflush(stdout);
 		printf("Matriz 1\n");
 		for (int i = 0; i < dim; i++)
 		{
@@ -166,6 +187,7 @@ int main(int argc, char* argv[])
 			}
 			printf("\n");
 		}
+		fflush(stdout);
 
 		printf("Matriz 2\n");
 		for (int i = 0; i < dim; i++)
@@ -176,6 +198,7 @@ int main(int argc, char* argv[])
 			}
 			printf("\n");
 		}
+		fflush(stdout);
 
 		printf("Matriz Resultado\n");
 		for (int i = 0; i < dim; i++)
@@ -186,6 +209,7 @@ int main(int argc, char* argv[])
 			}
 			printf("\n");
 		}
+		fflush(stdout);
 	}
 
 	
