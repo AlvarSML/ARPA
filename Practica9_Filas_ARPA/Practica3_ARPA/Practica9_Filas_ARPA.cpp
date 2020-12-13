@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
 	char nombre[128];
 	int envio = 1, cierre = 0;
 
+
 	// Gestion de errore
 	int error_code;
 
@@ -92,7 +93,7 @@ int main(int argc, char* argv[])
 		for (int i = 0; i < dim; i++) {
 			matriz1[i] = Mf1 + i * dim;
 			matrizRes[i] = MfRes + i * dim;
-		}		
+		}
 
 		for (int i = 0; i < dim; i++)
 		{
@@ -166,31 +167,31 @@ int main(int argc, char* argv[])
 				}
 			}
 			printf("[%i]Todas las filas enviadas\n", mirango);
+		}
 
-			int filasRecibidas = 0;
-			MPI_Status st;
-			float* buff = new float[dim];
-			// Se reciben las filas
-			while (filasRecibidas != dim) {
-				MPI_Recv(buff,dim,MPI_FLOAT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&st);
+		int filasRecibidas = 0;
+		MPI_Status st;
+		float* buff = new float[dim];
+		// Se reciben las filas
+		while (filasRecibidas != dim) {
+			MPI_Recv(buff, dim, MPI_FLOAT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &st);
 
-				matrizRes[(DATA-st.MPI_TAG)] = buff;
-				filasRecibidas++;
-
-			}
-
-			printf("Matriz Resultado\n");
-			for (int i = 0; i < dim; i++)
-			{
-				for (int j = 0; j < dim; j++)
-				{
-					printf("%f ", matrizRes[i][j]);
-				}
-				printf("\n");
-			}
-			fflush(stdout);
+			matrizRes[(DATA - st.MPI_TAG)] = buff;
+			filasRecibidas++;
 
 		}
+
+		printf("Matriz Resultado\n");
+		for (int i = 0; i < dim; i++)
+		{
+			for (int j = 0; j < dim; j++)
+			{
+				printf("%f ", matrizRes[i][j]);
+			}
+			printf("\n");
+		}
+		fflush(stdout);
+
 
 		// Recepcion de resultados
 	}
@@ -230,15 +231,15 @@ int main(int argc, char* argv[])
 		// Por cada fila
 		for (int i = 0; i < nfilas; i++) {
 			// Por cada valor
-			for (int j = 0; j < dim; j++ ) {
+			for (int j = 0; j < dim; j++) {
 				// Operaciones sobre la matriz 2
 				for (int k = 0; k < dim; k++) {
 					filas[i][j] += filas[i][k] * matriz2[k][i];
-				}				
+				}
 			}
 
 			// Una vez terminada una fila se manda directamente, ya que no requiere mucho tiempo
-			MPI_Send(filas[i],dim,MPI_FLOAT,0,DATA+(mirango* nfilas + i),MPI_COMM_WORLD);
+			MPI_Send(filas[i], dim, MPI_FLOAT, 0, DATA + (mirango * nfilas + i), MPI_COMM_WORLD);
 		}
 
 	}
