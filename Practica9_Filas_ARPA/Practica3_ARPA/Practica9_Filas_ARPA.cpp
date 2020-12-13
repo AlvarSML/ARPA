@@ -52,8 +52,11 @@ int main(int argc, char* argv[])
 	}
 	//MPI_Barrier(MPI_COMM_WORLD);
 	//Envio de las dimensiones del array
+	
+
 	MPI_Bcast(&dim, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
+	int filasProceso = ceil((float)dim / (tamano - 1));
 	// printf("El array va a ser de %i x %i\n", dim, dim);
 
 	// La unica matriz comun es la 2
@@ -103,7 +106,7 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		int filasProceso = ceil((float)dim / (tamano - 1));
+		
 		int filasRestantes = dim;
 		int filasMandar = filasProceso;
 		int fila;
@@ -149,8 +152,8 @@ int main(int argc, char* argv[])
 			// Se mandan la filas
 			for (int j = 0; j < filasMandar; j++) {
 				// Que fila se va a enviar
-				// NProceso * filasProceso
-				fila = i * filasMandar - j - 1;
+				// NProceso * filasProceso + fila enviada
+				fila = (i - 1) * filasProceso + j;
 
 				error_code = MPI_Send(matriz1[fila], dim, MPI_FLOAT, i, DATA, MPI_COMM_WORLD);
 				if (error_code != MPI_SUCCESS) {
@@ -171,12 +174,13 @@ int main(int argc, char* argv[])
 
 		int filasRecibidas = 0;
 		MPI_Status st;
-		float* buff = new float[dim];
+		float* buff = (float*)malloc(dim*sizeof(float));
 		// Se reciben las filas
 		while (filasRecibidas != dim) {
 			MPI_Recv(buff, dim, MPI_FLOAT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &st);
+			printf("[%i] Recibida fila de %i \n",mirango ,st.MPI_TAG);
 
-			matrizRes[(DATA - st.MPI_TAG)] = buff;
+			matrizRes[st.MPI_TAG] = buff;
 			filasRecibidas++;
 
 		}
@@ -186,7 +190,7 @@ int main(int argc, char* argv[])
 		{
 			for (int j = 0; j < dim; j++)
 			{
-				printf("%f ", matrizRes[i][j]);
+				printf("%3.2f ", matrizRes[i][j]);
 			}
 			printf("\n");
 		}
@@ -222,24 +226,33 @@ int main(int argc, char* argv[])
 				fflush(stdout);
 			}
 			else {
-				printf("[%i]Fila %i recibida con exito\n", (mirango * nfilas + i), mirango);
+				printf("[%i]Fila %i recibida con exito\n",mirango,(mirango * nfilas + i));
 				fflush(stdout);
 			}
 		}
 
+
+		float* filaRes = (float *)malloc(dim *sizeof(float));
 		// Operaciones
 		// Por cada fila
 		for (int i = 0; i < nfilas; i++) {
 			// Por cada valor
 			for (int j = 0; j < dim; j++) {
+				//printf("[%i]Fila calculada: ", mirango);
 				// Operaciones sobre la matriz 2
+				filaRes[j] = 0.;
 				for (int k = 0; k < dim; k++) {
-					filas[i][j] += filas[i][k] * matriz2[k][i];
+					filaRes[j] += (float)filas[i][k] * matriz2[k][j];
+					//printf("[%f]",filas[i][j]);
 				}
+				//printf("\n");
+				
 			}
 
 			// Una vez terminada una fila se manda directamente, ya que no requiere mucho tiempo
-			MPI_Send(filas[i], dim, MPI_FLOAT, 0, DATA + (mirango * nfilas + i), MPI_COMM_WORLD);
+ 
+			int tag = (mirango-1) * filasProceso + i;
+			MPI_Send(filaRes, dim, MPI_FLOAT, 0, tag , MPI_COMM_WORLD);
 		}
 
 	}
